@@ -1,5 +1,5 @@
 # SCH-hud
-Make a folder in your Windower\addons called SCH-hud and put this lua and the assets folder in there. Load this addon with main job SCH by typing adding send_command('lua l sch-hud') to your Gearswap.
+Make a folder in your Windower\addons called SCH-hud and put this lua and the assets folder in there. Load this addon with main job SCH by adding send_command('lua l sch-hud') to your Gearswap.
 
 The book will turn purple if you have Dark Arts enabled, and will glow purple if you activate Addenum: Black. The book will turn white if you have Light Arts enabled, and glow white if you active Addendum: White. 
 
