@@ -1,5 +1,6 @@
-# sch-hud
+# SCH-hud
+Make a folder in your Windower\addons called SCH-hud and put this lua and the assets folder in there. Load this addon with main job SCH by typing adding send_command('lua l sch-hud') to your Gearswap.
 
-To install, create a folder in your Windower\addons folder called sch-hud. Copy the contents of this repository to that folder.
+The book will turn purple if you have Dark Arts enabled, and will glow purple if you activate Addenum: Black. The book will turn white if you have Light Arts enabled, and glow white if you active Addendum: White. 
 
-Add the entry "send_command('lua l sch-hud')" to your SCH Gearswap. The addon will automatically unload itself when switching to another job.
+The left page displays the number of Stratagems you have available. If you have used any stratagems, the right page will count down until the next stratagem refresh.
