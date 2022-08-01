@@ -98,7 +98,7 @@ function ability_hud ()
 			--Get number of SCH Job Points
 			sch_jp = windower.ffxi.get_player().job_points.sch.jp_spent
 			--Get recast on Stratagems
-			local recast = windower.ffxi.get_ability_recasts()[231]
+			local recast = math.floor(windower.ffxi.get_ability_recasts()[231])
 
 			if BuffActive(359) then --Dark Arts
 				vGD = 255
