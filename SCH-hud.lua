@@ -177,7 +177,8 @@ function ability_hud ()
 		windower.prim.set_color('grimoire-l', vGL, vGL, vGL, vGL)
 		windower.prim.set_color('grimoire-la', vGLA, vGLA, vGLA, vGLA)
 
-		secs = recasttemp % 60
+		--secs = recasttemp % 60
+		secs = math.floor(recasttemp % 60 + 0.5)
 	
 		if (recast ~= 0) then
 			texts.visible(timer3, true)
