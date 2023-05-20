@@ -1,6 +1,6 @@
 _addon.name = 'SCH-hud'
 _addon.author = 'NeoNRAGE'
-_addon.version = '1.0.0'
+_addon.version = '1.0.1'
 
 texts = require('texts')
 timer3 = texts.new("")
