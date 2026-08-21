@@ -8,6 +8,7 @@ The left page displays the number of Stratagems you have available. If you have 
 - The book will automatically show or hide based on your class selection.
 - Drag and drop the book to reposition, and the new position will be saved.
 - Automatically adjust the countdown and max number of strategems based on your level and JPs.
+- `//schud help` for a list of commands to enable/disable/reset the widget
 
 Addendum: Black
 

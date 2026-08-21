@@ -1,12 +1,13 @@
 _addon.name = 'SCH-hud'
-_addon.author = 'NeoNRAGE'
+_addon.author = 'NeoNRAGE, plaidman'
 _addon.version = '2.0'
+_addon.commands = {'schhud','schud'}
 
 texts = require('texts')
 images = require('images')
 config = require('config')
 
-local defaults = {x = 1100, y = 700}
+local defaults = {x = 100, y = 100, enabled = true}
 local settings = config.load(defaults)
 
 local tick = 0
@@ -198,6 +199,8 @@ function delete()
 end
 
 windower.register_event('prerender', function()
+	if not settings.enabled then return end
+	
 	if os.time() > tick then
 		local sch_level = get_sch_level()
 		render_book(sch_level)
@@ -213,9 +216,7 @@ end)
 
 -- Handle drag and drop
 windower.register_event('mouse', function(type, x, y, delta, blocked)
-	if blocked then
-		return
-	end
+	if blocked then return end
 
 	-- Mouse drag
 	if type == 0 then
@@ -242,4 +243,51 @@ windower.register_event('mouse', function(type, x, y, delta, blocked)
 	end
 
 	return false
+end)
+
+windower.register_event('addon command', function (command, ...)
+    local args = {...}
+    command = command and command:lower() or 'toggle'
+
+	if command == 'toggle' then
+		settings.enabled = not settings.enabled
+		book_image:visible(settings.enabled)
+		strat_count_text:visible(settings.enabled)
+		timer_text:visible(settings.enabled)
+		config.save(settings, 'all')
+	end
+
+	if command == 'reset' then
+		update_position(defaults.x, defaults.y)
+		settings.enabled = defaults.enabled
+		book_image:visible(settings.enabled)
+		strat_count_text:visible(settings.enabled)
+		timer_text:visible(settings.enabled)
+		config.save(settings, 'all')
+	end
+
+	if command == 'help' then
+		windower.add_to_chat(207, 'SCH-hud commands:')
+		windower.add_to_chat(207, '  //schhud toggle - toggle the hud on/off')
+		windower.add_to_chat(207, '  //schhud reset - reset the hud position to default')
+		windower.add_to_chat(207, '  //schhud enable - enable the hud')
+		windower.add_to_chat(207, '  //schhud disable - disable the hud')
+		windower.add_to_chat(207, '  //schhud help - show this help message')
+	end
+
+	if command == 'enable' then
+		settings.enabled = true
+		book_image:visible(settings.enabled)
+		strat_count_text:visible(settings.enabled)
+		timer_text:visible(settings.enabled)
+		config.save(settings, 'all')
+	end
+
+	if command == 'disable' then
+		settings.enabled = false
+		book_image:visible(settings.enabled)
+		strat_count_text:visible(settings.enabled)
+		timer_text:visible(settings.enabled)
+		config.save(settings, 'all')
+	end
 end)
