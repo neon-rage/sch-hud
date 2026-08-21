@@ -11,6 +11,7 @@ local settings = config.load(defaults)
 
 local tick = 0
 local dragging = nil
+local last_book = 'hide'
 
 function init_book()
 	element = images.new()
@@ -54,10 +55,11 @@ local book_image = init_book()
 
 function set_book_texture(name)
 	local textures = {
-		['grimoire-d'] = windower.addon_path .. 'assets/grimoire-d.png',
-		['grimoire-da'] = windower.addon_path .. 'assets/grimoire-da.png',
-		['grimoire-l'] = windower.addon_path .. 'assets/grimoire-l.png',
-		['grimoire-la'] = windower.addon_path .. 'assets/grimoire-la.png',
+		['dark'] = windower.addon_path .. 'assets/grimoire-d.png',
+		['dark-a'] = windower.addon_path .. 'assets/grimoire-da.png',
+		['light'] = windower.addon_path .. 'assets/grimoire-l.png',
+		['light-a'] = windower.addon_path .. 'assets/grimoire-la.png',
+		['neutral'] = windower.addon_path .. 'assets/grimoire-l.png',
 	}
 
 	book_image:path(textures[name])
@@ -84,13 +86,9 @@ function get_sch_level()
 
 	if not player then
 		return -1
-	end
-
-	if player.main_job == 'SCH' then
+	elseif player.main_job == 'SCH' then
 		return player.main_job_level
-	end
-
-	if player.sub_job == 'SCH' then
+	elseif player.sub_job == 'SCH' then
 		return player.sub_job_level
 	end
 
@@ -121,42 +119,52 @@ function is_buff_active(buff_num)
 	return false
 end
 
-function render_hud()
-	local sch_level = get_sch_level()
-
+function which_book_active(sch_level)
 	if sch_level < 10 then
+		return 'hide'
+	elseif is_buff_active(359) then
+		return 'dark'
+	elseif is_buff_active(358) then
+		return 'light'
+	elseif is_buff_active(401) then
+		return 'light-a'
+	elseif is_buff_active(402) then
+		return 'dark-a'
+	else
+		return 'neutral'
+	end
+end
+
+function render_book(sch_level)
+	local active_buff = which_book_active(sch_level)
+	if active_buff == last_book then return end
+
+	if active_buff == 'hide' then
 		-- not sch or not high enough level to use strategems
 		strat_count_text:visible(false)
 		timer_text:visible(false)
 		book_image:visible(false)
+		last_book = 'hide'
 		return
-	else
+	end
+
+	if last_book == 'hide' then
 		strat_count_text:visible(true)
 		timer_text:visible(true)
 		book_image:visible(true)
 	end
 
-	if is_buff_active(359) then
-		-- Dark arts
-		set_book_texture('grimoire-d')
-		set_transparency(255, 255)
-	elseif is_buff_active(358) then
-		-- Light Arts
-		set_book_texture('grimoire-l')
-		set_transparency(255, 255)
-	elseif is_buff_active(401) then
-		-- Addendum White
-		set_book_texture('grimoire-la')
-		set_transparency(255, 255)
-	elseif is_buff_active(402) then
-		-- Addendum Black
-		set_book_texture('grimoire-da')
-		set_transparency(255, 255)
-	else
-		-- No Arts Active
-		set_transparency(100, 50)
-		set_book_texture('grimoire-l')
-	end
+	set_book_texture(active_buff)
+	set_transparency(
+		active_buff == 'neutral' and 100 or 255,
+		active_buff == 'neutral' and 50 or 255
+	)
+
+	last_book = active_buff
+end
+
+function render_strat_count(sch_level)
+	if sch_level < 10 then return end
 
 	local max_strats = get_max_strats(sch_level)
 
@@ -191,8 +199,11 @@ end
 
 windower.register_event('prerender', function()
 	if os.time() > tick then
+		local sch_level = get_sch_level()
+		render_book(sch_level)
+		render_strat_count(sch_level)
+
 		tick = os.time()
-		render_hud()
 	end
 end)
 
