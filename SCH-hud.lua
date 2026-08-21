@@ -9,6 +9,7 @@ config = require('config')
 
 local defaults = {x = 100, y = 100, enabled = true}
 local settings = config.load(defaults)
+local temp_disabled = false
 
 local tick = 0
 local dragging = nil
@@ -93,6 +94,7 @@ function get_sch_level()
 		return player.sub_job_level
 	end
 
+	temp_disabled = true
 	return -1
 end
 
@@ -199,15 +201,15 @@ function delete()
 end
 
 windower.register_event('prerender', function()
-	if not settings.enabled then return end
-	
-	if os.time() > tick then
-		local sch_level = get_sch_level()
-		render_book(sch_level)
-		render_strat_count(sch_level)
+	if (not settings.enabled) or temp_disabled then return end
+	if os.time() == tick then return end
 
-		tick = os.time()
-	end
+
+	local sch_level = get_sch_level()
+	render_book(sch_level)
+	render_strat_count(sch_level)
+
+	tick = os.time()
 end)
 
 windower.register_event('unload', function()
@@ -260,6 +262,7 @@ windower.register_event('addon command', function (command, ...)
 	if command == 'reset' then
 		update_position(defaults.x, defaults.y)
 		settings.enabled = defaults.enabled
+		temp_disabled = false
 		book_image:visible(settings.enabled)
 		strat_count_text:visible(settings.enabled)
 		timer_text:visible(settings.enabled)
@@ -290,4 +293,8 @@ windower.register_event('addon command', function (command, ...)
 		timer_text:visible(settings.enabled)
 		config.save(settings, 'all')
 	end
+end)
+
+windower.register_event('job change',function()
+	temp_disabled = false
 end)
